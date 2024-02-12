@@ -29,13 +29,17 @@ class Play extends Phaser.Scene {
         this.jumps = 0
         this.jumpMax = 2
 
-        // Spawn motor timer
         this.motorSpawnTimer = this.time.addEvent({
-            delay: Phaser.Math.Between(4000, 6000), // Random delay
+            delay: Phaser.Math.Between(4000, 6000),
             callback: this.spawnMotor,
             callbackScope: this,
             loop: true
         })
+
+        this.input.keyboard.on('keydown-D', function() {
+            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
+            this.physics.world.debugGraphic.clear()
+        }, this)
     }
 
     update() {
@@ -58,7 +62,6 @@ class Play extends Phaser.Scene {
             this.player.anims.stop()
         }
 
-        // Reset jump count when player lands
         if (this.player.body.touching.down) {
             this.jumps = 0
         }
