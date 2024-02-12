@@ -7,11 +7,11 @@ class Play extends Phaser.Scene {
         this.add.image(0, 0, 'background').setOrigin(0, 0)
 
         this.ground = this.add.tileSprite(0, this.game.config.height - 64, this.game.config.width, 64, 'tilesprite').setOrigin(0)
-
         this.physics.add.existing(this.ground, true)
+        this.ground.body.immovable = true
+        this.ground.body.allowGravity = false
 
         this.player = this.physics.add.sprite(this.game.config.width / 4, this.game.config.height - 128, 'player', 0)
-
         this.player.setGravityY(600)
 
         this.anims.create({
@@ -22,23 +22,52 @@ class Play extends Phaser.Scene {
         })
 
         this.player.anims.play('run', true)
+        this.physics.add.collider(this.player, this.ground)
 
         this.cursors = this.input.keyboard.createCursorKeys()
 
-        this.physics.add.collider(this.player, this.ground)
+        this.jumps = 0
+        this.jumpMax = 2
+
+        // Spawn motor timer
+        this.motorSpawnTimer = this.time.addEvent({
+            delay: Phaser.Math.Between(4000, 6000), // Random delay
+            callback: this.spawnMotor,
+            callbackScope: this,
+            loop: true
+        })
     }
 
     update() {
         this.ground.tilePositionX += 4
 
-        if (this.cursors.up.isDown && this.player.body.touching.down) {
-            this.player.setVelocityY(-350)
+        if (this.cursors.up.isDown && this.jumps < this.jumpMax && !this.isJumping) {
+            this.player.setVelocityY(-450)
+            this.isJumping = true
+        }
+
+        if (this.cursors.up.isUp && this.isJumping) {
+            this.jumps++
+            this.isJumping = false
         }
 
         if (this.player.body.touching.down) {
+            this.jumps = 0
             this.player.anims.play('run', true)
         } else {
             this.player.anims.stop()
         }
+
+        // Reset jump count when player lands
+        if (this.player.body.touching.down) {
+            this.jumps = 0
+        }
+    }
+
+    spawnMotor() {
+        let motor = new Motor(this, this.game.config.width + 64, this.game.config.height - 128, 'motor')
+        this.physics.add.collider(motor, this.ground)
+        motor.body.setVelocityX(-300)
+        this.physics.add.collider(this.player, motor, () => this.scene.start('gameOverScene'), null, this)
     }
 }

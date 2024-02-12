@@ -6,7 +6,7 @@ let config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     pixelArt: true,
-    zoom: 2,
+    zoom: 1,
     physics: {
         default: 'arcade',
         arcade: {
