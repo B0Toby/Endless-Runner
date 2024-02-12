@@ -1,7 +1,12 @@
 let config = {
     type: Phaser.AUTO,
     width: 800,
-    height: 600,
+    height: 450,
+    scale: {
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    pixelArt: true,
+    zoom: 2,
     physics: {
         default: 'arcade',
         arcade: {
