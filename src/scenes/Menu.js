@@ -16,6 +16,7 @@ class Menu extends Phaser.Scene {
 
     update() {
         if (this.cursors.up.isDown) {
+            this.sound.play('select')
             this.scene.start('playScene')
         }
     }

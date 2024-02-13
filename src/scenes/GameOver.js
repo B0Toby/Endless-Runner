@@ -16,6 +16,7 @@ class GameOver extends Phaser.Scene {
 
     update() {
         if (this.restartKey.isDown) {
+            this.sound.play('replay')
             this.scene.start('playScene')
         }
     }

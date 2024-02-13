@@ -5,6 +5,13 @@ class Load extends Phaser.Scene {
 
     preload() {
         this.load.path = './assets/'
+        // audio
+        this.load.audio('bgmusic', './audio/bgmusic.wav')
+        this.load.audio('jump', './audio/jump.wav')
+        this.load.audio('select', './audio/select.wav')
+        this.load.audio('replay', './audio/replay.wav')
+        
+        // img
         this.load.image('tilesprite', 'img/tilesprite.png')
         this.load.image('background', 'img/background.png')
         this.load.image('motor', 'img/motor.png')
