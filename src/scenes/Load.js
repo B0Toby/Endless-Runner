@@ -9,10 +9,7 @@ class Load extends Phaser.Scene {
         this.load.image('background', 'img/background.png')
         this.load.image('motor', 'img/motor.png')
 
-        this.load.spritesheet('player', 'img/player.png', {
-            frameWidth: 48,
-            frameHeight: 48
-        })
+        this.load.atlas('sprite', 'img/sprite.png', 'img/sprite.json')
 
         let loadingBar = this.add.graphics({
             fillStyle: {
@@ -30,14 +27,14 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        this.anims.create({
-            key: 'run',
-            frames: this.anims.generateFrameNumbers('player',{ 
-                start: 0,
-                end: 2
-            }),
-            frameRate: 12,
-            repeat: -1
-        })
+        this.anims.create({ 
+            key: 'run', 
+            frames: this.anims.generateFrameNames('sprite', {
+                prefix:"sprite",
+                start:1, 
+                end:3
+                }), 
+            repeat: -1 
+        });
     }
 }

@@ -11,17 +11,10 @@ class Play extends Phaser.Scene {
         this.ground.body.immovable = true
         this.ground.body.allowGravity = false
 
-        this.player = this.physics.add.sprite(this.game.config.width / 4, this.game.config.height - 128, 'player', 0)
+        this.player = this.physics.add.sprite(this.game.config.width / 4, this.game.config.height - 120, 'sprite')
         this.player.setGravityY(600)
 
-        this.anims.create({
-            key: 'run',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
-            frameRate: 8,
-            repeat: -1
-        })
-
-        this.player.anims.play('run', true)
+        this.player.play('run')
         this.physics.add.collider(this.player, this.ground)
 
         this.cursors = this.input.keyboard.createCursorKeys()
