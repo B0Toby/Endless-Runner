@@ -5,6 +5,7 @@ class Play extends Phaser.Scene {
 
     create() {
         this.add.image(0, 0, 'background').setOrigin(0, 0)
+        this.sun = this.add.tileSprite(0, 0, 1600, 450, 'sun').setOrigin(0)
 
         this.ground = this.add.tileSprite(0, this.game.config.height - 64, this.game.config.width, 64, 'tilesprite').setOrigin(0)
         this.physics.add.existing(this.ground, true)
@@ -23,7 +24,7 @@ class Play extends Phaser.Scene {
         this.jumpMax = 2
 
         this.motorSpawnTimer = this.time.addEvent({
-            delay: Phaser.Math.Between(4000, 6000),
+            delay: Phaser.Math.Between(3000, 5000),
             callback: this.spawnMotor,
             callbackScope: this,
             loop: true
@@ -37,6 +38,7 @@ class Play extends Phaser.Scene {
 
     update() {
         this.ground.tilePositionX += 4
+        this.sun.tilePositionX += 0.25
 
         if (this.cursors.up.isDown && this.jumps < this.jumpMax && !this.isJumping) {
             this.player.setVelocityY(-450)
@@ -61,7 +63,7 @@ class Play extends Phaser.Scene {
     }
 
     spawnMotor() {
-        let motor = new Motor(this, this.game.config.width + 64, this.game.config.height - 128, 'motor')
+        let motor = new Motor(this, this.game.config.width + 64, this.game.config.height - 100, 'motor')
         this.physics.add.collider(motor, this.ground)
         motor.body.setVelocityX(-300)
         this.physics.add.collider(this.player, motor, () => this.scene.start('gameOverScene'), null, this)

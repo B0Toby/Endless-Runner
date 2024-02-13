@@ -8,6 +8,7 @@ class Load extends Phaser.Scene {
         this.load.image('tilesprite', 'img/tilesprite.png')
         this.load.image('background', 'img/background.png')
         this.load.image('motor', 'img/motor.png')
+        this.load.image('sun', 'img/sun.png')
 
         this.load.atlas('sprite', 'img/sprite.png', 'img/sprite.json')
 
