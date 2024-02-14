@@ -6,10 +6,11 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.setBounds(0, 0, this.game.config.width, this.game.config.height)
         // game speed
         this.speedLevels = []
         for (let i = 100; i <= 100000; i += 100) {
-            this.speedLevels.push(i);
+            this.speedLevels.push(i)
         }
 
         // up arrow
@@ -85,6 +86,9 @@ class Play extends Phaser.Scene {
             fill: '#FFF'
         })
 
+        // camera shake
+        this.cameraIntensity = 0.0001
+
         // debugger
         this.input.keyboard.on('keydown-D', function() {
             this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
@@ -96,17 +100,21 @@ class Play extends Phaser.Scene {
         // game speed
         for (let i = 0; i < this.speedLevels.length; i++) {
             if (this.score >= this.speedLevels[i]) {
-                this.speedMultiplier = 1 + (i + 1) * 0.1; // Adjust multiplier based on level index
+                this.speedMultiplier = 1 + (i + 1) * 0.1
             }
         }
 
-        this.ground.tilePositionX += 4 * this.speedMultiplier;
-        this.cloud.tilePositionX += 0.5 * this.speedMultiplier;
-        this.sun.tilePositionX += 0.25 * this.speedMultiplier;
+        this.ground.tilePositionX += 4 * this.speedMultiplier
+        this.cloud.tilePositionX += 0.5 * this.speedMultiplier
+        this.sun.tilePositionX += 0.25 * this.speedMultiplier
         
-        this.motorSpawnTimer.delay = Phaser.Math.Between(3000, 5500) / this.speedMultiplier;
-        this.bubbleSpawnTimer.delay = Phaser.Math.Between(5000, 15000) / this.speedMultiplier;
-        this.platformSpawnTimer.delay = Phaser.Math.Between(6000, 10000) / this.speedMultiplier;
+        // camera shake
+        this.cameraIntensity += 0.000001
+        this.cameras.main.shake(100, this.cameraIntensity)
+
+        this.motorSpawnTimer.delay = Phaser.Math.Between(3000, 5500) / this.speedMultiplier
+        this.bubbleSpawnTimer.delay = Phaser.Math.Between(5000, 15000) / this.speedMultiplier
+        this.platformSpawnTimer.delay = Phaser.Math.Between(6000, 10000) / this.speedMultiplier
     
         if (this.cursors.up.isDown && this.jumps < this.jumpMax && !this.isJumping) {
             this.player.setVelocityY(-450)
@@ -127,14 +135,10 @@ class Play extends Phaser.Scene {
             this.player.anims.stop()
         }
 
-        if (this.player.body.touching.down) {
-            this.jumps = 0
-        }
-
         if (this.time.now > this.pScore) {
             this.score++
             this.scoreText.setText('Score: ' + this.score)
-            this.pScore = this.time.now + 250
+            this.pScore = this.time.now + 150
         }
 
         if (this.bubble2 && this.player.hasBubble) {
@@ -163,7 +167,7 @@ class Play extends Phaser.Scene {
 
     checkPlatformCollision(player, platform) {
         if (player.body.touching.down && platform.body.touching.up) {
-            this.sound.play('explosion')
+            this.sound.play('jump')
             platform.destroy()
             player.setVelocityY(-450)
             this.score += 20
