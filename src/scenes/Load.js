@@ -8,6 +8,7 @@ class Load extends Phaser.Scene {
         // audio
         this.load.audio('bgmusic', './audio/bgmusic.wav')
         this.load.audio('jump', './audio/jump.wav')
+        this.load.audio('gg', './audio/gg.wav')
         this.load.audio('select', './audio/select.wav')
         this.load.audio('pickup', './audio/pickup.wav')
         this.load.audio('replay', './audio/replay.wav')
@@ -19,14 +20,16 @@ class Load extends Phaser.Scene {
         this.load.image('bubble', 'img/bubble.png')
         this.load.image('bubble2', 'img/bubble2.png')
         this.load.image('motor', 'img/motor.png')
+        this.load.image('platform', 'img/platform.png')
         this.load.image('cloud', 'img/cloud.png')
         this.load.image('sun', 'img/sun.png')
 
         this.load.atlas('sprite', 'img/sprite.png', 'img/sprite.json')
 
+        // loadingBar
         let loadingBar = this.add.graphics({
             fillStyle: {
-                color: 0xffffff
+                color: 0xFFFFFF
             }
         })
         
@@ -48,6 +51,6 @@ class Load extends Phaser.Scene {
                 end:3
                 }), 
             repeat: -1 
-        });
+        })
     }
 }

@@ -39,7 +39,11 @@ class Play extends Phaser.Scene {
         // motor
         this.motorSpawnTimer = this.time.addEvent({
             delay: Phaser.Math.Between(3000, 5500),
-            callback: () => this.spawnMotor(),
+            callback: () => {
+                let motor = new Motor(this, this.game.config.width, this.game.config.height - 96, 'motor')
+                this.physics.add.collider(motor, this.ground)
+                this.physics.add.collider(this.player, motor, this.checkMotorCollision, null, this)
+            },
             callbackScope: this,
             loop: true
         })
@@ -47,7 +51,22 @@ class Play extends Phaser.Scene {
         // bubble
         this.bubbleSpawnTimer = this.time.addEvent({
             delay: Phaser.Math.Between(5000, 15000),
-            callback: () => this.spawnBubble(),
+            callback: () => {
+                let bubble = new Bubble(this, this.game.config.width, this.game.config.height - 86, 'bubble')
+                this.physics.add.overlap(this.player, bubble, this.checkBubbleCollision, null, this)
+            },
+            callbackScope: this,
+            loop: true
+        })
+
+        // platform
+        this.platformSpawnTimer = this.time.addEvent({
+            delay: Phaser.Math.Between(6000, 10000),
+            callback: () => {
+                let platform = new Platform(this, this.game.config.width, this.game.config.height - Phaser.Math.Between(140, 220), 'platform')
+                this.physics.add.collider(platform, this.ground)
+                this.physics.add.collider(this.player, platform, this.checkPlatformCollision, null, this)
+            },
             callbackScope: this,
             loop: true
         })
@@ -100,45 +119,16 @@ class Play extends Phaser.Scene {
             this.pScore = this.time.now + 750
         }
 
-        if (this.player.hasBubble && !this.bubble2) {
-            this.bubble2 = new Bubble2(this, this.player.x, this.player.y - this.player.height)
-            this.physics.add.existing(this.bubble2)
-            this.time.delayedCall(10000, () => {
-                this.player.hasBubble = false
-                if (this.bubble2) {
-                    this.bubble2.destroy()
-                    this.bubble2 = null
-                }
-            }, [], this)
-        }
-
-        if (this.bubble2) {
+        if (this.bubble2 && this.player.hasBubble) {
             this.bubble2.updatePosition(this.player.x, this.player.y - this.player.height / 5)
         }
     }
 
-    spawnMotor() {
-        let motor = new Motor(this, this.game.config.width, this.game.config.height - 96, 'motor')
-        this.physics.add.collider(motor, this.ground)
-        this.physics.add.collider(this.player, motor, this.hitMotor, null, this)
-    }
-
-    spawnBubble() {
-        let bubble = new Bubble(this, this.game.config.width, this.game.config.height - 86, 'bubble')
-        this.physics.add.overlap(this.player, bubble, this.collectBubble, null, this)
-    }
-    
-    collectBubble(player, bubble) {
-        this.sound.play('pickup')
-        player.hasBubble = true
-        bubble.destroy()
-    }
-
-    hitMotor(player, motor) {
+    checkMotorCollision(player, motor) {
         if (player.hasBubble) {
             this.sound.play('explosion')
             motor.destroy()
-            this.score += 10
+            this.score += 20
             this.scoreText.setText('Score: ' + this.score)
             player.hasBubble = false
             if (this.bubble2) {
@@ -147,9 +137,44 @@ class Play extends Phaser.Scene {
             }
             player.body.velocity.x = 0
         } else {
+            this.sound.play('gg')
             this.bgmusic.stop()
             this.scene.start('gameOverScene')
         }
     }
-    
+
+    checkPlatformCollision(player, platform) {
+        if (player.body.touching.down && platform.body.touching.up) {
+            this.sound.play('explosion')
+            platform.destroy()
+            player.setVelocityY(-450)
+            this.score += 10
+            this.scoreText.setText('Score: ' + this.score)
+        } else if (player.hasBubble) {
+            this.sound.play('explosion')
+            platform.destroy()
+            player.hasBubble = false
+            if (this.bubble2) {
+                this.bubble2.destroy()
+                this.bubble2 = null
+            }
+            this.score += 20
+            this.scoreText.setText('Score: ' + this.score)
+            player.setVelocityX(0)
+        } else {
+            this.sound.play('gg')
+            this.bgmusic.stop()
+            this.scene.start('gameOverScene')
+        }
+    }
+
+    checkBubbleCollision(player, bubble) {
+        this.sound.play('pickup')
+        player.hasBubble = true
+        if (!this.bubble2) {
+            this.bubble2 = new Bubble2(this, player.x, player.y - player.height / 2)
+            this.add.existing(this.bubble2)
+        }
+        bubble.destroy()
+    }
 }
