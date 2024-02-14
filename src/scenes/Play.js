@@ -6,7 +6,9 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // add cam
         this.cameras.main.setBounds(0, 0, this.game.config.width, this.game.config.height)
+        
         // game speed
         this.speedLevels = []
         for (let i = 100; i <= 100000; i += 100) {
@@ -107,15 +109,16 @@ class Play extends Phaser.Scene {
         this.ground.tilePositionX += 4 * this.speedMultiplier
         this.cloud.tilePositionX += 0.5 * this.speedMultiplier
         this.sun.tilePositionX += 0.25 * this.speedMultiplier
-        
-        // camera shake
-        this.cameraIntensity += 0.000001
-        this.cameras.main.shake(100, this.cameraIntensity)
 
         this.motorSpawnTimer.delay = Phaser.Math.Between(3000, 5500) / this.speedMultiplier
         this.bubbleSpawnTimer.delay = Phaser.Math.Between(5000, 15000) / this.speedMultiplier
         this.platformSpawnTimer.delay = Phaser.Math.Between(6000, 10000) / this.speedMultiplier
+
+        // camera shake
+        this.cameraIntensity += 0.000001
+        this.cameras.main.shake(100, this.cameraIntensity)
     
+        // jump
         if (this.cursors.up.isDown && this.jumps < this.jumpMax && !this.isJumping) {
             this.player.setVelocityY(-450)
             this.isJumping = true
