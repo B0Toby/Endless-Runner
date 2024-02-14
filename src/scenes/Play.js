@@ -2,9 +2,16 @@ class Play extends Phaser.Scene {
     constructor() {
         super("playScene")
         this.pScore = 0
+        this.speedMultiplier = 1
     }
 
     create() {
+        // game speed
+        this.speedLevels = []
+        for (let i = 100; i <= 100000; i += 100) {
+            this.speedLevels.push(i);
+        }
+
         // up arrow
         this.cursors = this.input.keyboard.createCursorKeys()
 
@@ -86,10 +93,21 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.ground.tilePositionX += 4
-        this.cloud.tilePositionX += 0.5
-        this.sun.tilePositionX += 0.25
+        // game speed
+        for (let i = 0; i < this.speedLevels.length; i++) {
+            if (this.score >= this.speedLevels[i]) {
+                this.speedMultiplier = 1 + (i + 1) * 0.1; // Adjust multiplier based on level index
+            }
+        }
 
+        this.ground.tilePositionX += 4 * this.speedMultiplier;
+        this.cloud.tilePositionX += 0.5 * this.speedMultiplier;
+        this.sun.tilePositionX += 0.25 * this.speedMultiplier;
+        
+        this.motorSpawnTimer.delay = Phaser.Math.Between(3000, 5500) / this.speedMultiplier;
+        this.bubbleSpawnTimer.delay = Phaser.Math.Between(5000, 15000) / this.speedMultiplier;
+        this.platformSpawnTimer.delay = Phaser.Math.Between(6000, 10000) / this.speedMultiplier;
+    
         if (this.cursors.up.isDown && this.jumps < this.jumpMax && !this.isJumping) {
             this.player.setVelocityY(-450)
             this.isJumping = true
@@ -116,7 +134,7 @@ class Play extends Phaser.Scene {
         if (this.time.now > this.pScore) {
             this.score++
             this.scoreText.setText('Score: ' + this.score)
-            this.pScore = this.time.now + 750
+            this.pScore = this.time.now + 250
         }
 
         if (this.bubble2 && this.player.hasBubble) {
@@ -128,7 +146,7 @@ class Play extends Phaser.Scene {
         if (player.hasBubble) {
             this.sound.play('explosion')
             motor.destroy()
-            this.score += 20
+            this.score += 40
             this.scoreText.setText('Score: ' + this.score)
             player.hasBubble = false
             if (this.bubble2) {
@@ -148,7 +166,7 @@ class Play extends Phaser.Scene {
             this.sound.play('explosion')
             platform.destroy()
             player.setVelocityY(-450)
-            this.score += 10
+            this.score += 20
             this.scoreText.setText('Score: ' + this.score)
         } else if (player.hasBubble) {
             this.sound.play('explosion')
@@ -158,7 +176,7 @@ class Play extends Phaser.Scene {
                 this.bubble2.destroy()
                 this.bubble2 = null
             }
-            this.score += 20
+            this.score += 40
             this.scoreText.setText('Score: ' + this.score)
             player.setVelocityX(0)
         } else {
