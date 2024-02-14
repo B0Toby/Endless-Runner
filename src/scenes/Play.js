@@ -75,6 +75,7 @@ class Play extends Phaser.Scene {
             this.player.setVelocityY(-450)
             this.isJumping = true
             this.sound.play('jump')
+            this.player.setTexture('sprite', 'sprite3')
         }
 
         if (this.cursors.up.isUp && this.isJumping) {
