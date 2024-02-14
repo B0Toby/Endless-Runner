@@ -92,10 +92,10 @@ class Play extends Phaser.Scene {
         this.cameraIntensity = 0.0001
 
         // debugger
-        this.input.keyboard.on('keydown-D', function() {
-            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
-            this.physics.world.debugGraphic.clear()
-        }, this)
+        // this.input.keyboard.on('keydown-D', function() {
+        //     this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
+        //     this.physics.world.debugGraphic.clear()
+        // }, this)
     }
 
     update() {
